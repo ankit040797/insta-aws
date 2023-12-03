@@ -14,6 +14,11 @@ public class PostService {
 
     @Autowired
     IPostRepo postRepo;
+    @Autowired
+    LikeService likeService;
+
+    @Autowired
+    CommentService commentService;
 
 
     public void createInstaPost(Post instaPost) {
@@ -25,15 +30,19 @@ public class PostService {
 
     }
 
+    @Transactional
     public void removeById(Integer postId) {
 
+        Post myPost = postRepo.findById(postId).orElseThrow();
+
         //delete all likes
+        likeService.clearLikesByPost(myPost);
 
 
         // delete all comments
-
+        commentService.clearCommentsByPost(myPost);
 
         //finally delete post
-
+        postRepo.deleteById(postId);
     }
 }
